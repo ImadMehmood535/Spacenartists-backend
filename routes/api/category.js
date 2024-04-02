@@ -101,17 +101,20 @@ router.get('/single/:id', authAdmin, async (req, res) => {
 });
 
 //Get All Categories by Parent
-router.get('/all', privateHeader, async (req, res) => {
+router.get('/all', async (req, res) => {
+  console.log("hi")
   try {
     connect.query('SELECT * FROM category WHERE parent_id=0', (error, result) => {
       if (!error && result.length > 0) {
         const reviewData = result;
         res.send(reviewData);
       } else {
+        console.log(error)
         res.status(400).send(userError);
       }
     });
   } catch (error) {
+    console.log(error)
     res.status(400).send(userError);
   }
 });
