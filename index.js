@@ -1,8 +1,16 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const connection = require("./config/db");
 const path = require("path");
 const cors = require("cors");
+const mysql = require("mysql");
+
+const connection = mysql.createConnection({
+  password: "AVNS_tKMBCKzlQwNcULMdXXa",
+  database: "defaultdb",
+  host: "db-mysql-nyc3-20784-do-user-15615777-0.c.db.ondigitalocean.com",
+  user: "doadmin",
+  port: "25060"
+});
 
 const app = express();
 app.use(cors());
