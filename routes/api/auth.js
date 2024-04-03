@@ -18,7 +18,7 @@ const userError = "Something went wrong. Please try again!";
 // const clientUrl = "http://localhost:3000/";
 const clientUrl = "https://spacenartists.com/";
 // const serverUrl = "https://apiv1.stg-api-sna.uk.paas.isenet.net/";
-const serverUrl = "https://apiv1.spacenartists.com/";
+const serverUrl = "https://squid-app-9efc8.ondigitalocean.app/";
 // const serverUrl = "http://localhost:5200/";
 
 //Validations Schema
@@ -569,6 +569,8 @@ router.get("/user-category/:id", privateHeader, async (req, res) => {
   });
 });
 
+
+
 //User get by countryId
 router.get(
   "/user-location/:countryId/:categoryId",
@@ -734,8 +736,62 @@ router.get("/users/:key?", privateHeader, async (req, res) => {
 });
 
 //Users getAll
-router.get("/users", privateHeader, async (req, res) => {
-  console.log("i m hittt");
+// router.get("/users",  (req, res) => {
+//   console.log("i am hit , hit !!");
+//   const id = req.params.id;
+//   console.log("have id >>", id);
+
+//   connect.query("SELECT * from users", (error, result) => {
+//     if (!error && result.length > 0) {
+//       console.log("Result", result.length);
+//       // let sql =
+//       // `SELECT payments.statusSubscribe,
+//       // users.*,category.id as categoryId,
+//       // category.category_name as categoryName,
+//       // category.parent_id as categoryParentId,
+//       // country.id as countryId,
+//       // country.name as countryName,
+//       // city.id as cityId, city.name as cityName,
+//       // pcat.category_name as categoryParentName
+//       // FROM users
+//       // LEFT JOIN payments ON users.email = payments.email
+//       // LEFT JOIN category ON users.categoryId=category.id
+//       // LEFT JOIN country ON users.countryId=country.id
+//       // LEFT JOIN city ON users.cityId=city.id
+//       // LEFT JOIN category as pcat ON pcat.id=category.parent_id
+//       // WHERE users.role != "Guest" AND payments.statusSubscribe IN ('Active', '')`;
+//       let sql = `SELECT users.*,category.id as categoryId, category.category_name as categoryName,category.parent_id as categoryParentId, 
+//       country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users 
+//       LEFT JOIN category ON users.categoryId=category.id 
+//       LEFT JOIN country ON users.countryId=country.id 
+//       LEFT JOIN city ON users.cityId=city.id 
+//       LEFT JOIN category as pcat ON pcat.id=category.parent_id WHERE users.role != "Guest" AND users.userStatus IN ('1', '');`;
+//       connect.query(sql, id, (error, result) => {
+//         console.log(result);
+//         if (!error && result.length > 0) {
+//           const user = result;
+//           for (let i = 0; i < user.length; i++) {
+//             if (user[i].coverPicture)
+//               user[
+//                 i
+//               ].coverPicture = `${serverUrl}uploads/${user[i].coverPicture}`;
+//             if (user[i].profilePicture)
+//               user[
+//                 i
+//               ].profilePicture = `${serverUrl}uploads/${user[i].profilePicture}`;
+//           }
+//           return res.send(user);
+//         } else {
+//           console.log(error);
+//           return res.status(500).send(userError);
+//         }
+//       });
+//     }
+//   });
+// });
+
+router.get("/users-all", (req, res) => {
+  console.log("i am hit , hit !!");
   const id = req.params.id;
   console.log("have id >>", id);
 
@@ -763,7 +819,7 @@ router.get("/users", privateHeader, async (req, res) => {
       LEFT JOIN category ON users.categoryId=category.id 
       LEFT JOIN country ON users.countryId=country.id 
       LEFT JOIN city ON users.cityId=city.id 
-      LEFT JOIN category as pcat ON pcat.id=category.parent_id WHERE users.role != "Guest" AND users.userStatus IN ('1', '');`;
+      LEFT JOIN category as pcat ON pcat.id=category.parent_id ;`;
       connect.query(sql, id, (error, result) => {
         console.log(result);
         if (!error && result.length > 0) {
@@ -780,6 +836,7 @@ router.get("/users", privateHeader, async (req, res) => {
           }
           return res.send(user);
         } else {
+          console.log(error);
           return res.status(500).send(userError);
         }
       });
