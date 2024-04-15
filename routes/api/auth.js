@@ -893,7 +893,9 @@ router.get("/users/pagination", privateHeader, async (req, res) => {
         numRows = result[0].numRows;
         numPages = Math.ceil(numRows / numPerPage);
         connect.query(
-          `SELECT users.*,category.id as categoryId,category.category_name as categoryName,category.parent_id as categoryParentId, country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users LEFT JOIN category ON users.categoryId=category.id LEFT JOIN country ON users.countryId=country.id LEFT JOIN city ON users.cityId=city.id LEFT JOIN category as pcat ON pcat.id=category.parent_id WHERE users.role != "Guest" ORDER BY ID DESC LIMIT ${numPerPage} OFFSET ${skip}`,
+          `SELECT users.*,category.id as categoryId,category.category_name as categoryName,category.parent_id as categoryParentId, country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users LEFT JOIN category ON users.categoryId=category.id LEFT JOIN country ON users.countryId=country.id LEFT JOIN city ON users.cityId=city.id LEFT JOIN category as pcat ON pcat.id=category.parent_id  ORDER BY ID DESC LIMIT ${numPerPage} OFFSET ${skip}`,
+        // connect.query(
+        //   `SELECT users.*,category.id as categoryId,category.category_name as categoryName,category.parent_id as categoryParentId, country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users LEFT JOIN category ON users.categoryId=category.id LEFT JOIN country ON users.countryId=country.id LEFT JOIN city ON users.cityId=city.id LEFT JOIN category as pcat ON pcat.id=category.parent_id WHERE users.role != "Guest" ORDER BY ID DESC LIMIT ${numPerPage} OFFSET ${skip}`,
           (error, result) => {
             if (!error) {
               let responsePayload = {
