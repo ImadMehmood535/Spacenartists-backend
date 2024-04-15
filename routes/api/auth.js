@@ -893,9 +893,66 @@ router.get("/users/pagination", privateHeader, async (req, res) => {
         numRows = result[0].numRows;
         numPages = Math.ceil(numRows / numPerPage);
         connect.query(
+          `SELECT users.*,category.id as categoryId,category.category_name as categoryName,category.parent_id as categoryParentId, country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users LEFT JOIN category ON users.categoryId=category.id LEFT JOIN country ON users.countryId=country.id LEFT JOIN city ON users.cityId=city.id LEFT JOIN category as pcat ON pcat.id=category.parent_id WHERE users.role != "Guest" ORDER BY ID DESC LIMIT ${numPerPage} OFFSET ${skip}`,
+          (error, result) => {
+            if (!error) {
+              let responsePayload = {
+                result: result,
+              };
+              if (pageStart <= numPages) {
+                responsePayload.pagination = {
+                  current: pageStart,
+                  perPage: numPerPage,
+                  totalPage: numPages,
+                  previous: pageStart > 0 ? true : false,
+                  next: pageStart < numPages - 1 ? true : false,
+                };
+              } else
+                responsePayload.pagination = {
+                  err:
+                    "queried page " +
+                    pageStart +
+                    " is >= to maximum page number " +
+                    numPages,
+                };
+              res.json(responsePayload);
+            } else {
+              res.status(400).send(error);
+            }
+          }
+        );
+      } else {
+        res.status(400).send(error);
+      }
+    });
+  } else {
+    res.status(400).send(error.details[0].message);
+  }
+});
+
+//added new api
+router.get("/users-all/pagination", privateHeader, async (req, res) => {
+  console.log("UUser pagination");
+  let { error } = userPaginationSchema.validate(req.query);
+  let { limit, page } = req.query;
+  if (!error) {
+    let numRows;
+    let numPerPage = parseInt(limit);
+    let pageStart = parseInt(page);
+    console.log("PAGE =>", pageStart);
+    console.log("limit =>", numPerPage);
+    let numPages;
+    let skip = pageStart * numPerPage;
+    console.log("skip =>", skip);
+    // Here we compute the LIMIT parameter for MySQL query
+    let limitStart = skip + "," + numPerPage;
+    // console.log("LimitStart => ", limitStart);
+    connect.query("SELECT count(*) as numRows FROM users", (error, result) => {
+      if (!error) {
+        numRows = result[0].numRows;
+        numPages = Math.ceil(numRows / numPerPage);
+        connect.query(
           `SELECT users.*,category.id as categoryId,category.category_name as categoryName,category.parent_id as categoryParentId, country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users LEFT JOIN category ON users.categoryId=category.id LEFT JOIN country ON users.countryId=country.id LEFT JOIN city ON users.cityId=city.id LEFT JOIN category as pcat ON pcat.id=category.parent_id  ORDER BY ID DESC LIMIT ${numPerPage} OFFSET ${skip}`,
-        // connect.query(
-        //   `SELECT users.*,category.id as categoryId,category.category_name as categoryName,category.parent_id as categoryParentId, country.id as countryId, country.name as countryName, city.id as cityId, city.name as cityName, pcat.category_name as categoryParentName FROM users LEFT JOIN category ON users.categoryId=category.id LEFT JOIN country ON users.countryId=country.id LEFT JOIN city ON users.cityId=city.id LEFT JOIN category as pcat ON pcat.id=category.parent_id WHERE users.role != "Guest" ORDER BY ID DESC LIMIT ${numPerPage} OFFSET ${skip}`,
           (error, result) => {
             if (!error) {
               let responsePayload = {
