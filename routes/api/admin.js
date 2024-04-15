@@ -81,7 +81,6 @@ router.post("/login", privateHeader, async (req, res) => {
             },
           };
 
-          
           jwt.sign(
             payload,
             config.get("jwtSecret"),
@@ -95,11 +94,13 @@ router.post("/login", privateHeader, async (req, res) => {
             }
           );
         } else {
+          console.log(error);
           return res.status(400).send("User not found");
         }
       }
     );
   } else {
+    console.log(error);
     res.status(400).send(error.details[0].message);
   }
 });
